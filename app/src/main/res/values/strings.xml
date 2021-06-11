@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Monitorizare traseu</string>
+    <string name="title_activity_maps">Monitorizare traseu</string>
+    <string name="normal_map">Normal</string>
+    <string name="hybrid_map">Hibrid</string>
+    <string name="satellite_map">Satelit</string>
+    <string name="terrain_map">Teren</string>
+    <string name="dropped_pin">Marcaj</string>
+</resources>
