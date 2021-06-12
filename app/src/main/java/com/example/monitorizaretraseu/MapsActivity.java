@@ -6,8 +6,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,29 +29,33 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.example.monitorizaretraseu.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.PointOfInterest;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
-    private GoogleMap harta;
-    private ActivityMapsBinding binding;
-    private static final String TAG = null;
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private static final String TAG = "MapActivity";
+    private static final int SOLICITA_PERMISIUNE_DE_LOCALIZARE = 1;
+    public GoogleMap harta;
+    private ArrayList<LatLng> puncte;
+    double latitudine;
+    double longitudine;
+    String provider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        puncte = new ArrayList<>();
+        setContentView(R.layout.activity_maps);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -74,6 +84,145 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        harta = googleMap;
+        activeazaLocatia();
+        if (!harta.isMyLocationEnabled())
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        harta.setMyLocationEnabled(true);
+
+        try {
+            // schimba aspectul hartii folosind fisierul JSON din res/draw/map_style.JSON
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.map_style));
+
+            if (!success) {
+                Log.e(TAG, "Nu s-a putut schimba aspectul hartii");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Nu s-a gasit fisierul. Eroare: ", e);
+        }
+
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        provider = lm.getBestProvider(criteria, true);
+
+        Location myLocation = lm.getLastKnownLocation(provider);
+
+        if (myLocation == null) {
+
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            provider = lm.getBestProvider(criteria, false);
+            myLocation = lm.getLastKnownLocation(provider);
+        }
+
+        if (myLocation != null) {
+            LatLng userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+
+            latitudine = myLocation.getLatitude();
+            longitudine = myLocation.getLongitude();
+
+            harta.addMarker(new MarkerOptions()
+                    .position(userLocation)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .title("Salut")
+                    .snippet("Latitudine:" + latitudine + ", Longitudine:" + longitudine)
+            );
+
+            Log.v(TAG, "Latitudine=" + latitudine);
+            Log.v(TAG, "Longitudine=" + longitudine);
+
+            harta.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18), 1500, null);
+
+
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location myLocation) {
+
+                    // latitudinea locatiei curente
+                    double latitude = myLocation.getLatitude();
+
+                    // longitudinea locatiei curente
+                    double longitude = myLocation.getLongitude();
+
+                    // creaza un obiect LatLng pentru locatia curenta
+                    LatLng latLng = new LatLng(latitude, longitude);
+
+                    // muta camera catre locatia curenta
+                    harta.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                    // Apropiem camera cat sa se vada strazile din jur
+                    harta.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+                    // Se traseaza linia
+                    traseazaLinie(latitude, longitude);
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status,
+                                            Bundle extras) {
+                    // TODO Auto-generated method stub
+                }
+            });
+
+        }
+
+        harta.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        // Se adauga butoanele de control pentru zoom
+        harta.getUiSettings().setZoomControlsEnabled(true);
+        setMapLongClick(harta);
+        setPoiClick(googleMap);
+    }
+
+    private void traseazaLinie(double latNou, double longNou) {
+
+        // vechile valori pentru latitudine si longitudine
+        puncte.add(new LatLng(latitudine, longitudine));
+
+        // noile valori pentru latitudine si longitudine
+        puncte.add(new LatLng(latNou, longNou));
+
+        Polyline linie = harta.addPolyline(new PolylineOptions()
+            .addAll(puncte)
+            .width(10)
+            .color(Color.RED));
+
+        latitudine = latNou;
+        longitudine = longNou;
     }
 
     private void setMapLongClick(final GoogleMap map) {
@@ -112,21 +261,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // Check if location permissions are granted and if so enable the
-        // location data layer.
+        // Verifica daca sunt acordate permisiunile de locatie
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case REQUEST_LOCATION_PERMISSION:
+            case SOLICITA_PERMISIUNE_DE_LOCALIZARE:
                 if (grantResults.length > 0
                         && grantResults[0]
                         == PackageManager.PERMISSION_GRANTED) {
-                    enableMyLocation();
+                    activeazaLocatia();
                     break;
                 }
         }
     }
 
-    private void enableMyLocation() {
+    private void activeazaLocatia() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -134,45 +282,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             ActivityCompat.requestPermissions(this, new String[]
                             {Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
+                    SOLICITA_PERMISIUNE_DE_LOCALIZARE);
         }
-    }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        harta = googleMap;
-        enableMyLocation();
-        try {
-            // Customize the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            boolean success = googleMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.map_style));
-
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e(TAG, "Can't find style. Error: ", e);
-        }
-
-        //46.576066, 26.904358
-        LatLng home = new LatLng(46.576066, 26.904358);
-        float zoom = 15;
-        harta.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
-
-        setMapLongClick(harta);
-        setPoiClick(googleMap);
-
     }
 }
