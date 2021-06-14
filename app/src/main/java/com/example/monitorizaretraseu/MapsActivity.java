@@ -132,7 +132,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             harta.addMarker(new MarkerOptions()
                     .position(userLocation)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                     .title("Salut")
                     .snippet("Latitudine:" + latitudine + ", Longitudine:" + longitudine)
             );
