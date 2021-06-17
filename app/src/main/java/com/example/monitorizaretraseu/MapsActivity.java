@@ -6,7 +6,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -37,7 +36,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -59,7 +57,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         puncte = new ArrayList<>();
         setContentView(R.layout.activity_maps2);
 
-        text = findViewById(R.id.txt);
+        text = findViewById(R.id.distanta);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -248,7 +246,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             .width(10)
             .color(Color.RED));
 
-        text.setText(calc.distanta(puncte));
+        text.setText(calc.distanta(puncte) + " m");
 
         latitudine = latNou;
         longitudine = longNou;
