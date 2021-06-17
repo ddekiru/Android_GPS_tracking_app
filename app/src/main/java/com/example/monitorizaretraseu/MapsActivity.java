@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -19,6 +20,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,12 +48,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     double latitudine;
     double longitudine;
     String provider;
+    private Distanta calc = new Distanta();
+    TextView text;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         puncte = new ArrayList<>();
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_maps2);
+
+        text = findViewById(R.id.txt);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -71,16 +80,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.normal_map:
                 harta.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                Toast toast1 = Toast.makeText(this, "Harta normala", Toast.LENGTH_SHORT);
+                toast1.show();
                 return true;
+
             case R.id.hybrid_map:
                 harta.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                Toast toast2 = Toast.makeText(this, "Harta hibrid", Toast.LENGTH_SHORT);
+                toast2.show();
                 return true;
+
             case R.id.satellite_map:
                 harta.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                Toast toast3 = Toast.makeText(this, "Harta satelit", Toast.LENGTH_SHORT);
+                toast3.show();
                 return true;
+
             case R.id.terrain_map:
                 harta.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                Toast toast4 = Toast.makeText(this, "Harta teren", Toast.LENGTH_SHORT);
+                toast4.show();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -89,7 +110,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         harta = googleMap;
+
         activeazaLocatia();
+
         if (!harta.isMyLocationEnabled())
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -130,11 +153,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             latitudine = myLocation.getLatitude();
             longitudine = myLocation.getLongitude();
 
+            String snippet = String.format(Locale.getDefault(),
+                    "Lat: %1$.5f, Long: %2$.5f",
+                    userLocation.latitude,
+                    userLocation.longitude);
+
             harta.addMarker(new MarkerOptions()
                     .position(userLocation)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                    .title("Salut")
-                    .snippet("Latitudine:" + latitudine + ", Longitudine:" + longitudine)
+                    .title("Start")
+                    .snippet(snippet)
             );
 
             Log.v(TAG, "Latitudine=" + latitudine);
@@ -185,8 +213,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 @Override
-                public void onStatusChanged(String provider, int status,
-                                            Bundle extras) {
+                public void onStatusChanged(String provider, int status, Bundle extras) {
                     // TODO Auto-generated method stub
                 }
             });
@@ -220,6 +247,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             .addAll(puncte)
             .width(10)
             .color(Color.RED));
+
+        text.setText(calc.distanta(puncte));
 
         latitudine = latNou;
         longitudine = longNou;
@@ -258,6 +287,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

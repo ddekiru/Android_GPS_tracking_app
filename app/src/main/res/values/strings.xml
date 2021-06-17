@@ -6,4 +6,5 @@
     <string name="satellite_map">Satelit</string>
     <string name="terrain_map">Teren</string>
     <string name="dropped_pin">Marcaj</string>
+    <string name="distanta">Distanta</string>
 </resources>
