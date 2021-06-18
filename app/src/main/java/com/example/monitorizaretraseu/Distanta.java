@@ -12,8 +12,13 @@ public class Distanta {
         float distanta = 0;
 
         for(int i=0; i < puncte.size()-1; i++) {
-            Location loc1 = new Location(String.valueOf(puncte.get(i)));
-            Location loc2 = new Location(String.valueOf(puncte.get(i+1)));
+            Location loc1 = new Location("");
+            loc1.setLatitude(puncte.get(i).latitude);
+            loc1.setLongitude(puncte.get(i).longitude);
+
+            Location loc2 = new Location("");
+            loc2.setLatitude(puncte.get(i+1).latitude);
+            loc2.setLongitude(puncte.get(i+1).longitude);
 
             distanta = distanta + loc1.distanceTo(loc2);
         }
