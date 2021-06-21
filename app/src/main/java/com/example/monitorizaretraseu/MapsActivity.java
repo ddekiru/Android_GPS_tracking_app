@@ -43,7 +43,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int SOLICITA_PERMISIUNE_DE_LOCALIZARE = 1;
     public GoogleMap harta;
     private ArrayList<LatLng> puncte;
-    private ArrayList<Location> locatii;
     double latitudine;
     double longitudine;
     String provider;

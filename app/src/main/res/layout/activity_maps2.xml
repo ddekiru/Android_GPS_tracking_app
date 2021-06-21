@@ -31,6 +31,7 @@
         android:id="@+id/cronometru"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/design_default_color_primary"
         android:padding="10dp"
         android:text="@string/cronometru_text"
         android:textAlignment="center"
@@ -45,6 +46,8 @@
     <TextView
         android:id="@+id/distanta"
         android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/design_default_color_primary"
         android:layout_height="wrap_content"
         android:text="@string/distanta_text"
         android:textAlignment="center"
@@ -59,6 +62,8 @@
     <TextView
         android:id="@+id/altitudine"
         android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/design_default_color_primary"
         android:layout_height="wrap_content"
         android:text="@string/altitudine_text"
         android:textAlignment="center"
