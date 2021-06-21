@@ -48,8 +48,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     double longitudine;
     String provider;
     private Distanta calc = new Distanta();
-    TextView text;
-
+    TextView distanta;
+    TextView altitudine;
+    Marker marker = null;
+    Marker poiMarker = null;
 
 
     @Override
@@ -58,7 +60,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         puncte = new ArrayList<>();
         setContentView(R.layout.activity_maps2);
 
-        text = findViewById(R.id.distanta);
+        distanta = findViewById(R.id.distanta);
+        altitudine = findViewById(R.id.altitudine);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -253,7 +256,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             .width(10)
             .color(Color.RED));
 
-        text.setText(calc.distanta(puncte));
+        distanta.setText(calc.distanta(puncte));
+        altitudine.setText(String.valueOf(loc1.getAltitude()));
 
         latitudine = latNou;
         longitudine = longNou;
@@ -268,12 +272,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         latLng.latitude,
                         latLng.longitude);
 
-                map.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(getString(R.string.dropped_pin))
-                        .snippet(snippet)
-                        .icon(BitmapDescriptorFactory.defaultMarker
-                                (BitmapDescriptorFactory.HUE_ORANGE)));
+                if (marker!=null) {
+                    marker.remove();
+                    marker=null;
+                }
+
+                if (marker == null) {
+                    marker = harta.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(getString(R.string.dropped_pin))
+                            .snippet(snippet)
+                            .icon(BitmapDescriptorFactory.defaultMarker
+                                    (BitmapDescriptorFactory.HUE_ORANGE)));
+                }
             }
         });
     }
@@ -282,12 +293,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
             @Override
             public void onPoiClick(PointOfInterest poi) {
-                Marker poiMarker = harta.addMarker(new MarkerOptions()
-                        .position(poi.latLng)
-                        .title(poi.name)
-                        .icon(BitmapDescriptorFactory.defaultMarker
-                                (BitmapDescriptorFactory.HUE_ORANGE)));
-                poiMarker.showInfoWindow();
+
+                if (poiMarker!=null) {
+                    poiMarker.remove();
+                    poiMarker=null;
+                }
+
+                if (poiMarker == null) {
+                    poiMarker = harta.addMarker(new MarkerOptions()
+                            .position(poi.latLng)
+                            .title(poi.name)
+                            .icon(BitmapDescriptorFactory.defaultMarker
+                                    (BitmapDescriptorFactory.HUE_ORANGE)));
+                    poiMarker.showInfoWindow();
+                }
             }
         });
 
