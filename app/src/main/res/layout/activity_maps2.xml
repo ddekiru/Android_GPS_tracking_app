@@ -51,7 +51,6 @@
         android:gravity="center"
         android:text="@string/distanta_text"
         android:textAlignment="center"
-        android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
