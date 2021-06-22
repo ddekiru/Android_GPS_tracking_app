@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         puncte = new ArrayList<>();
         setContentView(R.layout.activity_maps2);
+
+        Chronometer cronometru = (Chronometer) findViewById(R.id.cronometru);
+        cronometru.start();
 
         distanta = findViewById(R.id.distanta);
         altitudine = findViewById(R.id.altitudine);
