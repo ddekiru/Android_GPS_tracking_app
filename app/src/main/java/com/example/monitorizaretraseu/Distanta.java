@@ -22,7 +22,9 @@ public class Distanta {
             loc2.setLongitude(puncte.get(puncte.size()-1).longitude);
 
             distanta += loc1.distanceTo(loc2);
-            return String.valueOf(distanta);
+            //String ok = "%.1f", 3.25;
+
+            return String.valueOf(distanta) + "m";
 
         } else {
             for(int i=0; i < puncte.size()-1; i++) {
@@ -37,7 +39,7 @@ public class Distanta {
                 distanta += loc1.distanceTo(loc2);
 
             }
-            return String.valueOf(distanta);
+            return String.valueOf(distanta) + "m";
         }
 
     }

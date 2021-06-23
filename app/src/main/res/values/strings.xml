@@ -7,7 +7,7 @@
     <string name="terrain_map">Teren</string>
     <string name="dropped_pin">Marcaj</string>
     <string name="distanta">Distanta</string>
-    <string name="cronometru_text">text</string>
-    <string name="distanta_text">text</string>
-    <string name="altitudine_text">text</string>
+    <string name="cronometru_text">00:00</string>
+    <string name="distanta_text">0.0m</string>
+    <string name="altitudine_text">0m</string>
 </resources>

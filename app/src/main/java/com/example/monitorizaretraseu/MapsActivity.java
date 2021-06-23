@@ -46,15 +46,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int SOLICITA_PERMISIUNE_DE_LOCALIZARE = 1;
     public GoogleMap harta;
     private ArrayList<LatLng> puncte;
-    double latitudine;
-    double longitudine;
-    String provider;
+    private double latitudine;
+    private double longitudine;
+    private String provider;
     private Distanta calc = new Distanta();
-    TextView distanta;
-    TextView altitudine;
-    Marker marker = null;
-    Marker poiMarker = null;
-    Chronometer cronometru;
+    private TextView distanta;
+    private TextView altitudine;
+    private Marker marker = null;
+    private Marker poiMarker = null;
+    private Chronometer cronometru;
     private boolean start = false;
     private Polyline linie;
 
@@ -66,7 +66,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps2);
 
         cronometru = (Chronometer) findViewById(R.id.cronometru);
-
         distanta = findViewById(R.id.distanta);
         altitudine = findViewById(R.id.altitudine);
 
