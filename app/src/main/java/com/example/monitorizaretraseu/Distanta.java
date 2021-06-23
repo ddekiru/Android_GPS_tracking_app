@@ -8,20 +8,42 @@ import java.util.ArrayList;
 
 public class Distanta {
 
-    public String distanta(ArrayList<LatLng> puncte) {
-        float distanta = 0;
+    private float distanta = 0;
 
-        for(int i=0; i < puncte.size()-1; i++) {
+    public String distanta(ArrayList<LatLng> puncte) {
+
+        if(puncte.size() > 2) {
             Location loc1 = new Location("");
-            loc1.setLatitude(puncte.get(i).latitude);
-            loc1.setLongitude(puncte.get(i).longitude);
+            loc1.setLatitude(puncte.get(puncte.size()-2).latitude);
+            loc1.setLongitude(puncte.get(puncte.size()-2).longitude);
 
             Location loc2 = new Location("");
-            loc2.setLatitude(puncte.get(i+1).latitude);
-            loc2.setLongitude(puncte.get(i+1).longitude);
+            loc2.setLatitude(puncte.get(puncte.size()-1).latitude);
+            loc2.setLongitude(puncte.get(puncte.size()-1).longitude);
 
-            distanta = distanta + loc1.distanceTo(loc2);
+            distanta += loc1.distanceTo(loc2);
+            return String.valueOf(distanta);
+
+        } else {
+            for(int i=0; i < puncte.size()-1; i++) {
+                Location loc1 = new Location("");
+                loc1.setLatitude(puncte.get(i).latitude);
+                loc1.setLongitude(puncte.get(i).longitude);
+
+                Location loc2 = new Location("");
+                loc2.setLatitude(puncte.get(i+1).latitude);
+                loc2.setLongitude(puncte.get(i+1).longitude);
+
+                distanta += loc1.distanceTo(loc2);
+
+            }
+            return String.valueOf(distanta);
         }
-        return String.valueOf(distanta);
+
     }
+
+    public void reset() {
+        distanta = 0;
+    }
+
 }
