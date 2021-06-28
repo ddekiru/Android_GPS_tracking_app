@@ -18,12 +18,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Button"
+        android:layout_marginBottom="24dp"
+        android:background="@color/orange"
+        android:backgroundTint="#FF9800"
+        android:onClick="start"
+        android:text="Start"
+        app:iconTint="#FF9800"
         app:layout_constraintBottom_toTopOf="@+id/cronometru"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -74,7 +78,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/distanta"
         app:layout_constraintTop_toBottomOf="@+id/include" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

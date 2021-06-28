@@ -15,10 +15,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,14 +46,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int SOLICITA_PERMISIUNE_DE_LOCALIZARE = 1;
     public GoogleMap harta;
     private ArrayList<LatLng> puncte;
-    double latitudine;
-    double longitudine;
-    String provider;
+    private double latitudine;
+    private double longitudine;
+    private String provider;
     private Distanta calc = new Distanta();
-    TextView distanta;
-    TextView altitudine;
-    Marker marker = null;
-    Marker poiMarker = null;
+    private TextView distanta;
+    private TextView altitudine;
+    private Marker marker = null;
+    private Marker poiMarker = null;
+    private Chronometer cronometru;
+    private boolean start = false;
+    private Polyline linie;
 
 
     @Override
@@ -60,9 +65,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         puncte = new ArrayList<>();
         setContentView(R.layout.activity_maps2);
 
-        Chronometer cronometru = (Chronometer) findViewById(R.id.cronometru);
-        cronometru.start();
-
+        cronometru = (Chronometer) findViewById(R.id.cronometru);
         distanta = findViewById(R.id.distanta);
         altitudine = findViewById(R.id.altitudine);
 
@@ -203,7 +206,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     harta.animateCamera(CameraUpdateFactory.zoomTo(15));
 
                     // Se traseaza linia
-                    traseazaLinie(latitude, longitude);
+                    if(start) {
+                        traseazaLinie(latitude, longitude);
+                    }
 
                 }
 
@@ -254,7 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // noile valori pentru latitudine si longitudine
         puncte.add(new LatLng(latNou, longNou));
 
-        Polyline linie = harta.addPolyline(new PolylineOptions()
+        linie = harta.addPolyline(new PolylineOptions()
             .addAll(puncte)
             .width(10)
             .color(Color.RED));
@@ -341,5 +346,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             {Manifest.permission.ACCESS_FINE_LOCATION},
                     SOLICITA_PERMISIUNE_DE_LOCALIZARE);
         }
+    }
+
+    public void start(View view) {
+        start = true;
+
+        puncte.clear();
+        harta.clear();
+        calc.reset();
+        distanta.setText(calc.distanta(puncte));
+
+        cronometru.setBase(SystemClock.elapsedRealtime());
+        cronometru.start();
     }
 }
