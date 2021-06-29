@@ -86,25 +86,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         // Change the map type based on the user's selection.
         switch (item.getItemId()) {
-            case R.id.normal_map:
+            case R.id.normal:
                 harta.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 Toast toast1 = Toast.makeText(this, "Harta normala", Toast.LENGTH_SHORT);
                 toast1.show();
                 return true;
 
-            case R.id.hybrid_map:
+            case R.id.hibrid:
                 harta.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 Toast toast2 = Toast.makeText(this, "Harta hibrid", Toast.LENGTH_SHORT);
                 toast2.show();
                 return true;
 
-            case R.id.satellite_map:
+            case R.id.satelit:
                 harta.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 Toast toast3 = Toast.makeText(this, "Harta satelit", Toast.LENGTH_SHORT);
                 toast3.show();
                 return true;
 
-            case R.id.terrain_map:
+            case R.id.teren:
                 harta.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 Toast toast4 = Toast.makeText(this, "Harta teren", Toast.LENGTH_SHORT);
                 toast4.show();
@@ -182,7 +182,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                            this,
+                    this,
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -260,9 +260,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         puncte.add(new LatLng(latNou, longNou));
 
         linie = harta.addPolyline(new PolylineOptions()
-            .addAll(puncte)
-            .width(10)
-            .color(Color.RED));
+                .addAll(puncte)
+                .width(10)
+                .color(Color.RED));
 
         distanta.setText(calc.distanta(puncte));
         altitudine.setText(String.valueOf(loc1.getAltitude()));
@@ -323,7 +323,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // Verifica daca sunt acordate permisiunile de locatie
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case SOLICITA_PERMISIUNE_DE_LOCALIZARE:

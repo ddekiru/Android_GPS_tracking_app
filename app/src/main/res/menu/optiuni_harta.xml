@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/normal_map"
-        android:title="@string/normal_map"
+    <item android:id="@+id/normal"
+        android:title="@string/harta_normala"
         app:showAsAction="never"/>
-    <item android:id="@+id/hybrid_map"
-        android:title="@string/hybrid_map"
+    <item android:id="@+id/hibrid"
+        android:title="@string/harta_hibrid"
         app:showAsAction="never"/>
-    <item android:id="@+id/satellite_map"
-        android:title="@string/satellite_map"
+    <item android:id="@+id/satelit"
+        android:title="@string/harta_satelit"
         app:showAsAction="never"/>
-    <item android:id="@+id/terrain_map"
-        android:title="@string/terrain_map"
+    <item android:id="@+id/teren"
+        android:title="@string/harta_teren"
         app:showAsAction="never"/>
 </menu>
