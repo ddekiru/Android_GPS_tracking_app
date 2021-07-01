@@ -7,11 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 public class Distanta {
-
     private float distanta = 0;
-
     public String distanta(ArrayList<LatLng> puncte) {
-
         if(puncte.size() > 2) {
             Location loc1 = new Location("");
             loc1.setLatitude(puncte.get(puncte.size()-2).latitude);
@@ -22,10 +19,8 @@ public class Distanta {
             loc2.setLongitude(puncte.get(puncte.size()-1).longitude);
 
             distanta += loc1.distanceTo(loc2);
-            //String ok = "%.1f", 3.25;
 
-            return String.valueOf(distanta) + "m";
-
+            return distanta + "m";
         } else {
             for(int i=0; i < puncte.size()-1; i++) {
                 Location loc1 = new Location("");
@@ -37,15 +32,11 @@ public class Distanta {
                 loc2.setLongitude(puncte.get(i+1).longitude);
 
                 distanta += loc1.distanceTo(loc2);
-
             }
             return String.valueOf(distanta) + "m";
         }
-
     }
-
     public void reset() {
         distanta = 0;
     }
-
 }

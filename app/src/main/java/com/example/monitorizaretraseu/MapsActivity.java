@@ -48,8 +48,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<LatLng> puncte;
     private double latitudine;
     private double longitudine;
-    private String provider;
-    private Distanta calc = new Distanta();
+    private String furnizor;
+    private Distanta traseu = new Distanta();
     private TextView distanta;
     private TextView altitudine;
     private Marker marker = null;
@@ -116,23 +116,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        harta = googleMap;
-
+    public void onMapReady(GoogleMap gMap) {
+        harta = gMap;
         activeazaLocatia();
-
         if (!harta.isMyLocationEnabled())
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED) {
                 return;
             }
         harta.setMyLocationEnabled(true);
 
         try {
-            // schimba aspectul hartii folosind fisierul JSON din res/draw/map_style.JSON
-            boolean success = googleMap.setMapStyle(
+            boolean success = gMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             this, R.raw.map_style));
-
             if (!success) {
                 Log.e(TAG, "Nu s-a putut schimba aspectul hartii");
             }
@@ -144,15 +145,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-        provider = lm.getBestProvider(criteria, true);
+        furnizor = lm.getBestProvider(criteria, true);
 
-        Location myLocation = lm.getLastKnownLocation(provider);
+        Location myLocation = lm.getLastKnownLocation(furnizor);
 
         if (myLocation == null) {
 
             criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-            provider = lm.getBestProvider(criteria, false);
-            myLocation = lm.getLastKnownLocation(provider);
+            furnizor = lm.getBestProvider(criteria, false);
+            myLocation = lm.getLastKnownLocation(furnizor);
         }
 
         if (myLocation != null) {
@@ -178,7 +179,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             harta.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18), 1500, null);
 
-
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -189,27 +189,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location myLocation) {
-
-                    // latitudinea locatiei curente
                     double latitude = myLocation.getLatitude();
-
-                    // longitudinea locatiei curente
                     double longitude = myLocation.getLongitude();
-
-                    // creaza un obiect LatLng pentru locatia curenta
                     LatLng latLng = new LatLng(latitude, longitude);
-
-                    // muta camera catre locatia curenta
                     harta.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                    // Apropiem camera cat sa se vada strazile din jur
                     harta.animateCamera(CameraUpdateFactory.zoomTo(15));
-
-                    // Se traseaza linia
                     if(start) {
                         traseazaLinie(latitude, longitude);
                     }
-
                 }
 
                 @Override
@@ -239,15 +226,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             return;
         }
-        // Se adauga butoanele de control pentru zoom
         harta.getUiSettings().setZoomControlsEnabled(true);
-        setMapLongClick(harta);
-        setPoiClick(googleMap);
+        marcaj(harta);
+        marcajTipPOI(gMap);
     }
 
     private void traseazaLinie(double latNou, double longNou) {
 
-        // vechile valori pentru latitudine si longitudine
         Location loc1 = new Location("provider");
         loc1.setLatitude(latitudine);
         loc1.setLongitude(longitudine);
@@ -256,7 +241,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Location loc2 = new Location("provider");
         loc2.setLatitude(latNou);
         loc2.setLongitude(longNou);
-        // noile valori pentru latitudine si longitudine
         puncte.add(new LatLng(latNou, longNou));
 
         linie = harta.addPolyline(new PolylineOptions()
@@ -264,14 +248,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .width(10)
                 .color(Color.RED));
 
-        distanta.setText(calc.distanta(puncte));
-        altitudine.setText(String.valueOf(loc1.getAltitude()));
+        distanta.setText(traseu.distanta(puncte));
+        altitudine.setText(loc1.getAltitude() + "m");
 
         latitudine = latNou;
         longitudine = longNou;
     }
 
-    private void setMapLongClick(final GoogleMap map) {
+    private void marcaj(final GoogleMap map) {
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -279,12 +263,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         "Lat: %1$.5f, Long: %2$.5f",
                         latLng.latitude,
                         latLng.longitude);
-
                 if (marker!=null) {
                     marker.remove();
                     marker=null;
                 }
-
                 if (marker == null) {
                     marker = harta.addMarker(new MarkerOptions()
                             .position(latLng)
@@ -297,16 +279,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void setPoiClick(final GoogleMap map) {
+    private void marcajTipPOI(final GoogleMap map) {
         map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
             @Override
             public void onPoiClick(PointOfInterest poi) {
-
                 if (poiMarker!=null) {
                     poiMarker.remove();
                     poiMarker=null;
                 }
-
                 if (poiMarker == null) {
                     poiMarker = harta.addMarker(new MarkerOptions()
                             .position(poi.latLng)
@@ -317,12 +297,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
-
     }
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case SOLICITA_PERMISIUNE_DE_LOCALIZARE:
@@ -352,8 +333,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         puncte.clear();
         harta.clear();
-        calc.reset();
-        distanta.setText(calc.distanta(puncte));
+        traseu.reset();
+        distanta.setText(traseu.distanta(puncte));
 
         cronometru.setBase(SystemClock.elapsedRealtime());
         cronometru.start();
