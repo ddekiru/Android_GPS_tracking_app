@@ -14,6 +14,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -57,6 +58,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Chronometer cronometru;
     private boolean start = false;
     private Polyline linie;
+    private LocationProvider lp;
 
 
     @Override
@@ -142,10 +144,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        lp = lm.getProvider(LocationManager.GPS_PROVIDER);
+        Log.i("suporta altitudine", String.valueOf(lp.supportsAltitude()));
 
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_COARSE);
         furnizor = lm.getBestProvider(criteria, true);
+
 
         Location myLocation = lm.getLastKnownLocation(furnizor);
 
@@ -161,6 +166,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             latitudine = myLocation.getLatitude();
             longitudine = myLocation.getLongitude();
+
+            altitudine.setText(myLocation.getAltitude() + "m");
 
             String snippet = String.format(Locale.getDefault(),
                     "Lat: %1$.5f, Long: %2$.5f",
@@ -192,8 +199,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     double latitude = myLocation.getLatitude();
                     double longitude = myLocation.getLongitude();
                     LatLng latLng = new LatLng(latitude, longitude);
+
                     harta.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    harta.animateCamera(CameraUpdateFactory.zoomTo(15));
+
                     if(start) {
                         traseazaLinie(latitude, longitude);
                     }
@@ -233,12 +241,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void traseazaLinie(double latNou, double longNou) {
 
-        Location loc1 = new Location("provider");
+        Location loc1 = new Location("furnizor");
         loc1.setLatitude(latitudine);
         loc1.setLongitude(longitudine);
         puncte.add(new LatLng(latitudine, longitudine));
 
-        Location loc2 = new Location("provider");
+        Location loc2 = new Location("furnizor");
         loc2.setLatitude(latNou);
         loc2.setLongitude(longNou);
         puncte.add(new LatLng(latNou, longNou));
@@ -249,7 +257,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .color(Color.RED));
 
         distanta.setText(traseu.distanta(puncte));
-        altitudine.setText(loc1.getAltitude() + "m");
+        altitudine.setText(loc2.getAltitude() + "m");
+
 
         latitudine = latNou;
         longitudine = longNou;

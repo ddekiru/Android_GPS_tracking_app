@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Distanta {
     private float distanta = 0;
+
     public String distanta(ArrayList<LatLng> puncte) {
         if(puncte.size() > 2) {
             Location loc1 = new Location("");
@@ -20,7 +21,7 @@ public class Distanta {
 
             distanta += loc1.distanceTo(loc2);
 
-            return distanta + "m";
+            return String.format("%.2f", distanta) + "m";
         } else {
             for(int i=0; i < puncte.size()-1; i++) {
                 Location loc1 = new Location("");
@@ -33,7 +34,7 @@ public class Distanta {
 
                 distanta += loc1.distanceTo(loc2);
             }
-            return String.valueOf(distanta) + "m";
+            return String.format("%.2f", distanta) + "m";
         }
     }
     public void reset() {
