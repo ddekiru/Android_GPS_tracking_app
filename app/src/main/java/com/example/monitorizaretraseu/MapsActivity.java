@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,8 +58,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker poiMarker = null;
     private Chronometer cronometru;
     private boolean start = false;
-    private Polyline linie;
+    private boolean mutaCamera = true;
+    //private Polyline linie;
     private LocationProvider lp;
+    private Button startButton;
 
 
     @Override
@@ -67,6 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         puncte = new ArrayList<>();
         setContentView(R.layout.activity_maps2);
 
+        startButton = findViewById(R.id.buton);
         cronometru = (Chronometer) findViewById(R.id.cronometru);
         distanta = findViewById(R.id.distanta);
         altitudine = findViewById(R.id.altitudine);
@@ -200,7 +204,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     double longitude = myLocation.getLongitude();
                     LatLng latLng = new LatLng(latitude, longitude);
 
-                    harta.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    if(mutaCamera) {
+                        harta.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    }
+
 
                     if(start) {
                         traseazaLinie(latitude, longitude);
@@ -222,6 +229,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     // TODO Auto-generated method stub
                 }
             });
+            harta.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener(){
+                @Override
+                public boolean onMyLocationButtonClick()
+                {
+                    if(mutaCamera) {
+                        mutaCamera = false;
+                        Toast oprit = Toast.makeText(getApplicationContext(), "Centrarea camerei oprită", Toast.LENGTH_SHORT);
+                        oprit.show();
+                    } else {
+                        mutaCamera = true;
+                        Toast activat = Toast.makeText(getApplicationContext(), "Centrarea camerei pornită", Toast.LENGTH_SHORT);
+                        activat.show();
+                    }
+
+                    return false;
+                }
+            });
 
         }
 
@@ -237,6 +261,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         harta.getUiSettings().setZoomControlsEnabled(true);
         marcaj(harta);
         marcajTipPOI(gMap);
+
     }
 
     private void traseazaLinie(double latNou, double longNou) {
@@ -251,14 +276,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         loc2.setLongitude(longNou);
         puncte.add(new LatLng(latNou, longNou));
 
-        linie = harta.addPolyline(new PolylineOptions()
+        Polyline linie = harta.addPolyline(new PolylineOptions()
                 .addAll(puncte)
                 .width(10)
                 .color(Color.RED));
 
         distanta.setText(traseu.distanta(puncte));
         altitudine.setText(loc2.getAltitude() + "m");
-
 
         latitudine = latNou;
         longitudine = longNou;
@@ -308,7 +332,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -338,14 +361,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void start(View view) {
-        start = true;
 
-        puncte.clear();
-        harta.clear();
-        traseu.reset();
-        distanta.setText(traseu.distanta(puncte));
+        if (!start) {
+            puncte.clear();
+            harta.clear();
+            traseu.reset();
+            distanta.setText(traseu.distanta(puncte));
+            cronometru.setBase(SystemClock.elapsedRealtime());
+            cronometru.start();
+            startButton.setText("Stop");
+            startButton.setBackgroundColor(getResources().getColor(R.color.rosu));
+            start = true;
+        } else {
+            startButton.setText("Start");
+            startButton.setBackgroundColor(getResources().getColor(R.color.portocaliu));
+            cronometru.stop();
+            start = false;
+        }
 
-        cronometru.setBase(SystemClock.elapsedRealtime());
-        cronometru.start();
     }
 }
