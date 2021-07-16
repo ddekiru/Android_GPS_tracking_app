@@ -48,21 +48,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int SOLICITA_PERMISIUNE_DE_LOCALIZARE = 1;
     public GoogleMap harta;
     private ArrayList<LatLng> puncte;
-    private double latitudine;
-    private double longitudine;
+    private double latitudine, longitudine;
     private String furnizor;
     private Distanta traseu = new Distanta();
-    private TextView distanta;
-    private TextView altitudine;
+    private Chronometer cronometru;
+    private TextView distanta, altitudine;
     private Marker marker = null;
     private Marker poiMarker = null;
-    private Chronometer cronometru;
     private boolean start = false;
     private boolean mutaCamera = true;
-    //private Polyline linie;
     private LocationProvider lp;
     private Button startButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,29 +86,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Change the map type based on the user's selection.
         switch (item.getItemId()) {
             case R.id.normal:
                 harta.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                Toast toast1 = Toast.makeText(this, "Harta normala", Toast.LENGTH_SHORT);
+                Toast toast1 = Toast.makeText(this, "Hartă normala", Toast.LENGTH_SHORT);
                 toast1.show();
                 return true;
 
             case R.id.hibrid:
                 harta.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                Toast toast2 = Toast.makeText(this, "Harta hibrid", Toast.LENGTH_SHORT);
+                Toast toast2 = Toast.makeText(this, "Hartă hibrid", Toast.LENGTH_SHORT);
                 toast2.show();
                 return true;
 
             case R.id.satelit:
                 harta.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                Toast toast3 = Toast.makeText(this, "Harta satelit", Toast.LENGTH_SHORT);
+                Toast toast3 = Toast.makeText(this, "Hartă satelit", Toast.LENGTH_SHORT);
                 toast3.show();
                 return true;
 
             case R.id.teren:
                 harta.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                Toast toast4 = Toast.makeText(this, "Harta teren", Toast.LENGTH_SHORT);
+                Toast toast4 = Toast.makeText(this, "Hartă teren", Toast.LENGTH_SHORT);
                 toast4.show();
                 return true;
 
@@ -197,9 +192,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location myLocation) {
+
                     double latitude = myLocation.getLatitude();
                     double longitude = myLocation.getLongitude();
                     LatLng latLng = new LatLng(latitude, longitude);
@@ -229,6 +226,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     // TODO Auto-generated method stub
                 }
             });
+
             harta.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener(){
                 @Override
                 public boolean onMyLocationButtonClick()
@@ -258,6 +256,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             return;
         }
+
         harta.getUiSettings().setZoomControlsEnabled(true);
         marcaj(harta);
         marcajTipPOI(gMap);
@@ -269,7 +268,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Location loc1 = new Location("furnizor");
         loc1.setLatitude(latitudine);
         loc1.setLongitude(longitudine);
-        puncte.add(new LatLng(latitudine, longitudine));
 
         Location loc2 = new Location("furnizor");
         loc2.setLatitude(latNou);
@@ -282,7 +280,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .color(Color.RED));
 
         distanta.setText(traseu.distanta(puncte));
-        altitudine.setText(loc2.getAltitude() + "m");
+        altitudine.setText(loc1.getAltitude() + "m");
 
         latitudine = latNou;
         longitudine = longNou;
@@ -292,10 +290,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
+
                 String snippet = String.format(Locale.getDefault(),
                         "Lat: %1$.5f, Long: %2$.5f",
                         latLng.latitude,
                         latLng.longitude);
+
                 if (marker!=null) {
                     marker.remove();
                     marker=null;
@@ -316,6 +316,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
             @Override
             public void onPoiClick(PointOfInterest poi) {
+
                 if (poiMarker!=null) {
                     poiMarker.remove();
                     poiMarker=null;

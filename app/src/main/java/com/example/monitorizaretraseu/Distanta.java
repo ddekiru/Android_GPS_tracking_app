@@ -37,6 +37,7 @@ public class Distanta {
             return String.format("%.2f", distanta) + "m";
         }
     }
+
     public void reset() {
         distanta = 0;
     }

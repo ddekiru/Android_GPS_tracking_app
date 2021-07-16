@@ -78,5 +78,33 @@
         app:layout_constraintStart_toEndOf="@+id/distanta"
         app:layout_constraintTop_toBottomOf="@+id/include" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="Distanta"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/altitudine"
+        app:layout_constraintStart_toStartOf="@+id/distanta"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="Altitudine"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/altitudine"
+        app:layout_constraintStart_toEndOf="@+id/distanta"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

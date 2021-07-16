@@ -7,7 +7,8 @@
     <string name="harta_teren">Teren</string>
     <string name="dropped_pin">Marcaj</string>
     <string name="distanta">Distanta</string>
-    <string name="cronometru_text">text</string>
-    <string name="distanta_text">text</string>
-    <string name="altitudine_text">text</string>
+    <string name="cronometru_text">Timp</string>
+    <string name="distanta_text">0.00m</string>
+    <string name="altitudine_text">0.00m</string>
+    <string name="istoric">Istoric</string>
 </resources>
