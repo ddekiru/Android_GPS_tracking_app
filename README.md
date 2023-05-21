@@ -1,4 +1,5 @@
 # Monitorizare Traseu
 Lucrare Licenta
 
-Aplicatie android pentru monitorizarea traseului.
+Android GPS tracking app.
+
